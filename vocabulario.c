@@ -1,84 +1,48 @@
-#include "vocabulario.h"
-#include <stdlib.h>
 #include <string.h>
-    #define TAM 99000
-int main (void){
+#include <stdio.h>
+#include <stdlib.h>
+#include "vocabulario.h"
+int vocabulario() {
+    
+    pRef = fopen("tripadvisor_hotel_reviews.csv", "r");
+    pTemp = fopen("vocabulario.txt", "w+");
 
-    voc = fopen("Nota1.txt",'r');  // vocabulario do NOTA 1 
-    if (voc == NULL)
-        return EXIT_FAILURE;
-    while (fgets(line,sizeof line,voc)!=NULL){
-            palavras[i] = strdup(line);
-            i++;
-            numPalavras++;
+    while(fscanf(pRef, "%[^ ]", str) != EOF){ //pega a palavra do documento de reviews
+            k = (strlen(str) - 1);
+            for(int i=0; i<5; i++){ //tira virgula, espaco e ponto final das palavras
+                if(str[k] == fim[i]){
+                    str[k] = '\0';
+                    break;
+                }
+            }
+        if(strlen(str) > 3){ //palavras apenas com mais de 3 letras
+            if(cont == 0){ //caso seja a primeira do vocabulario
+                strcat(str, " ");
+                fputs(str, pTemp);
+                cont++;
+            }else {
+                chec = 0;
+                fseek(pTemp, 0, SEEK_SET);
+                while(fscanf(pTemp, "%s", voca) != EOF){ //pega a palavra do vocabulario e compara com a do review
+                    if(strcmp(voca, str) == 0){
+                        chec = 1;
+                        break;
+                    }
+                    fseek(pTemp, 1, SEEK_CUR);
+                }
+                if(chec == 0){ //passa a palavra para o arquivo do vocabulario
+                    strcat(str, " ");
+                    fputs(str, pTemp);
+                    cont++;
+                }
+            }
+        }
+        fgetc(pRef);
     }
-    int j;
-    for(j=0;j<numPalavras;j++)
-        printf("\n%s",palavras[j]);
-
-    fclose(voc);
-
-    return EXIT_SUCCESS;
-
-    voc = fopen("Nota2.txt",'r');  // vocabulario do NOTA 2 
-    if (voc == NULL)
-        return EXIT_FAILURE;
-    while (fgets(line,sizeof line,voc)!=NULL){
-            palavras[i] = strdup(line);
-            i++;
-            numPalavras++;
-    }
-    int j;
-    for(j=0;j<numPalavras;j++)
-        printf("\n%s",palavras[j]);
-
-    fclose(voc);
-
-    return EXIT_SUCCESS;
-    voc = fopen("Nota3.txt",'r');  // vocabulario do NOTA 3 
-    if (voc == NULL)
-        return EXIT_FAILURE;
-    while (fgets(line,sizeof line,voc)!=NULL){
-            palavras[i] = strdup(line);
-            i++;
-            numPalavras++;
-    }
-    int j;
-    for(j=0;j<numPalavras;j++)
-        printf("\n%s",palavras[j]);
-
-    fclose(voc);
-
-    return EXIT_SUCCESS;
-    voc = fopen("Nota4.txt",'r');  // vocabulario do NOTA 4 
-    if (voc == NULL)
-        return EXIT_FAILURE;
-    while (fgets(line,sizeof line,voc)!=NULL){
-            palavras[i] = strdup(line);
-            i++;
-            numPalavras++;
-    }
-    int j;
-    for(j=0;j<numPalavras;j++)
-        printf("\n%s",palavras[j]);
-
-    fclose(voc);
-
-    return EXIT_SUCCESS;
-    voc = fopen("Nota5.txt",'r');  // vocabulario do NOTA 5
-    if (voc == NULL)
-        return EXIT_FAILURE;
-    while (fgets(line,sizeof line,voc)!=NULL){
-            palavras[i] = strdup(line);
-            i++;
-            numPalavras++;
-    }
-    int j;
-    for(j=0;j<numPalavras;j++)
-        printf("\n%s",palavras[j]);
-
-    fclose(voc);
-
-    return EXIT_SUCCESS;
-
+    fclose(pTemp);
+    fclose(pRef);
+    return vocabulario;
 }
+
+
+

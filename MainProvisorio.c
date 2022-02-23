@@ -3,6 +3,7 @@
 #include <malloc.h>
 #include <math.h>
 #include "main.h"
+#include "vocabulario.h"
 //#include "BibliotecaDoProjeto"
 
 #define TAM 99000 //teste

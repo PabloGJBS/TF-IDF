@@ -2,13 +2,11 @@
 #ifndef vocabulario_h
 #define vocabulario_h
 #include <stdio.h>
-#define TAM 99000
-    int i = 0;
-    int numPalavras = 0;
-    char* palavras[TAM];
-    char* line[TAM];
-    FILE *voc;
-    //FILE
+    char str[50], voca[50]; //palavra por palavra pegar vacabulario do arquivo
+    FILE *pRef, *pTemp;
+    int chec, cont = 0, k;
+    char fim[5] = {',', ';', '\n', '.', ':'};
+
     
 
 #endif //vocabulario_h
