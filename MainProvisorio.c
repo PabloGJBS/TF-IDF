@@ -3,8 +3,8 @@
 #include <malloc.h>
 #include <math.h>
 #include "main.h"
-#include "vocabulario.h"
-//#include "BibliotecaDoProjeto"
+#include "Vocabulario.h"
+#include "ferramentasGerais.h"
 
 #define TAM 99000 //teste
 
@@ -32,7 +32,7 @@ do {
             printf("Digite o nome do arquivo: ");
             scanf("%s",nomeArquivo);
 
-            Reviews = abreArquivo(nomeArquivo);
+            Reviews = abrirarquivo(nomeArquivo);
 
             if(Reviews == NULL){
                 printf("Erro ao ler o arquivo");
@@ -45,28 +45,31 @@ do {
             Nota4 = fopen("Nota4.txt","w");
             Nota5 = fopen("Nota5.txt","w");
 
-            separaPelaNota(Reviews, Nota1, Nota2, Nota3, Nota4, Nota5);
+            classificar(Reviews, Nota1, Nota2, Nota3, Nota4, Nota5);
 
             printf("Todos os arquivos foram gerados com sucesso\n");
             break;
         case 2:
+        
             printf("Gerando o vocabulario");
             if(Reviews != NULL)
                 fclose(Reviews);
             if(vocabulario !=NULL)
                 fclose(vocabulario);
+            vocabulario = fopen("vocabulary.txt", "w+");
+            Reviews = fopen("tripadvisor_hotel_reviews.csv", "r");
             while((c = fgetc(Reviews))!= EOF){
                 if (c == '"'){
                     i = 0;
                     posicaoArquivo = ftell(vocabulario);
-                    while(!isEndWord(c)){
+                    while(!FinaldaPalavra(c)){
                         palavra[i]=c;
                         c = fgetc(Reviews);
                         i++;
                     }
                 palavra[i] = '\n';
                     if(i >3){
-                        if(!BuscaPorRepetidas2(palavra,vocabulario)){
+                        if(!checarpalavrasrepetidas2(palavra,vocabulario)){
                             fputs(palavra,vocabulario);
                             count ++;
                         }
@@ -93,27 +96,27 @@ do {
             Nota5 = fopen("Nota5.txt","r");
             TodosTFIDF = fopen("TodosTFIDF.csv","w");
 
-            nPalavrasN1 = numberOfWordsInFile(Nota1);
-            nPalavrasN2 = numberOfWordsInFile(Nota2);
-            nPalavrasN3 = numberOfWordsInFile(Nota3);
-            nPalavrasN4 = numberOfWordsInFile(Nota4);
-            nPalavrasN5 = numberOfWordsInFile(Nota5);
+            nPalavrasN1 = numerodepalavrasnoarquivo(Nota1);
+            nPalavrasN2 = numerodepalavrasnoarquivo(Nota2);
+            nPalavrasN3 = numerodepalavrasnoarquivo(Nota3);
+            nPalavrasN4 = numerodepalavrasnoarquivo(Nota4);
+            nPalavrasN5 = numerodepalavrasnoarquivo(Nota5);
 
             print("Gerando TF-IDF\n");
             fputs("Vocabulario,Nota1,Nota2,Nota3,Nota4,Nota5\n",TodosTFIDF);
                 while((c = fgetc(vocabulario))!= EOF){
                     i = 0;
                     nDocComPalavra = 0;
-                    while(!isEndWord(c)) {
+                    while(!FinaldaPalavra(c)) {
                                 palavra[i] = c;
-                                c = fgetc(vocabulary);
+                                c = fgetc(vocabulario);
                                 i++;
                     }
-                        contadorPalavraN1 = wordCountInFile(palavra, Nota1);  
-                        contadorPalavraN2 = wordCountInFile(palavra, Nota2); 
-                        contadorPalavraN3 = wordCountInFile(palavra, Nota3); 
-                        contadorPalavraN4 = wordCountInFile(palavra, Nota4); 
-                        contadorPalavraN5 = wordCountInFile(palavra, Nota5); 
+                        contadorPalavraN1 = contarpalavrasnoarquivo(palavra, Nota1);  
+                        contadorPalavraN2 = contarpalavrasnoarquivo(palavra, Nota2); 
+                        contadorPalavraN3 = contarpalavrasnoarquivo(palavra, Nota3); 
+                        contadorPalavraN4 = contarpalavrasnoarquivo(palavra, Nota4); 
+                        contadorPalavraN5 = contarpalavrasnoarquivo(palavra, Nota5); 
                         if(contadorPalavraN1)
                             nDocComPalavra++;
                         if(contadorPalavraN2)

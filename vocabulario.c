@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "vocabulario.h"
-int vocabulario() {
+int Vocabulario() {
     
     pRef = fopen("tripadvisor_hotel_reviews.csv", "r");
     pTemp = fopen("vocabulario.txt", "w+");
