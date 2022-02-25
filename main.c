@@ -1,14 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <malloc.h>
 #include <math.h>
-#include "main.h"
-#include "Vocabulario.h"
-#include "ferramentasGerais.h"
+#include "BibliotecaGeral.h"
 
-#define TAM 99000 //teste
-
-void menu(){
+void menu(){                                                        // função do menu
 
 printf("\n~################### MENU ####################~\n");
 printf("\n Escolha o que deseja realizar:                \n");
@@ -20,75 +17,17 @@ printf("\n~(4) Printar TF-IDF                           ~\n");
 printf("\n~(5) SAIR DO PROGRAMA                         ~\n");
 
 }
-
 int main(){
-    
-do {
+do {                                                                 //casos escolhidos pelo usuario no menu
     menu();
     scanf("%d",&MenuNum);
     switch (MenuNum) {
-        case 1:
-            printf("./tripadvisor_hotel_reviews.csv\n");
-            printf("Digite o nome do arquivo: ");
-            scanf("%s",nomeArquivo);
-
-            Reviews = abrirarquivo(nomeArquivo);
-
-            if(Reviews == NULL){
-                printf("Erro ao ler o arquivo");
-                break;
-            }
-
-            Nota1 = fopen("Nota1.txt","w");
-            Nota2 = fopen("Nota2.txt","w");
-            Nota3 = fopen("Nota3.txt","w");
-            Nota4 = fopen("Nota4.txt","w");
-            Nota5 = fopen("Nota5.txt","w");
-
-            classificar(Reviews, Nota1, Nota2, Nota3, Nota4, Nota5);
-
-            printf("Todos os arquivos foram gerados com sucesso\n");
-            break;
-        case 2:
-        
-            printf("Gerando o vocabulario");
-            if(Reviews != NULL)
-                fclose(Reviews);
-            if(vocabulario !=NULL)
-                fclose(vocabulario);
-            vocabulario = fopen("vocabulary.txt", "w+");
-            Reviews = fopen("tripadvisor_hotel_reviews.csv", "r");
-            while((c = fgetc(Reviews))!= EOF){
-                if (c == '"'){
-                    i = 0;
-                    posicaoArquivo = ftell(vocabulario);
-                    while(!FinaldaPalavra(c)){
-                        palavra[i]=c;
-                        c = fgetc(Reviews);
-                        i++;
-                    }
-                palavra[i] = '\n';
-                    if(i >3){
-                        if(!checarpalavrasrepetidas2(palavra,vocabulario)){
-                            fputs(palavra,vocabulario);
-                            count ++;
-                        }
-                    }
-                    memset(palavra,0,100);
-                }
-            }
-            break;
-        case 3:
-            if(vocabulario != NULL)
-                fclose(vocabulario);
-            if(Nota1 !=NULL){
-                fclose(Nota1);
-                fclose(Nota2); 
-                fclose(Nota3); 
-                fclose(Nota4); 
-                fclose(Nota5);
-            }  
-            vocabulario = fopen("vocabulario.txt","r");
+        case 1: //divNotas
+             divNotas(pRef,pNota1,pNota2,pNota3,pNota4,pNota5);
+        case 2: //vocabulario
+             vocabulario(pRef, pTemp);
+        case 3: //tfidf
+            pTemp = fopen("vocabulario.txt","r");
             Nota1 = fopen("Nota1.txt","r");
             Nota2 = fopen("Nota2.txt","r");
             Nota3 = fopen("Nota3.txt","r");
@@ -102,14 +41,14 @@ do {
             nPalavrasN4 = numerodepalavrasnoarquivo(Nota4);
             nPalavrasN5 = numerodepalavrasnoarquivo(Nota5);
 
-            print("Gerando TF-IDF\n");
+            printf("Gerando TF-IDF\n");
             fputs("Vocabulario,Nota1,Nota2,Nota3,Nota4,Nota5\n",TodosTFIDF);
-                while((c = fgetc(vocabulario))!= EOF){
+                while((c = fgetc(pTemp))!= EOF){
                     i = 0;
                     nDocComPalavra = 0;
                     while(!FinaldaPalavra(c)) {
                                 palavra[i] = c;
-                                c = fgetc(vocabulario);
+                                c = fgetc(pTemp);
                                 i++;
                     }
                         contadorPalavraN1 = contarpalavrasnoarquivo(palavra, Nota1);  
@@ -147,11 +86,9 @@ do {
                         fputs(str,TodosTFIDF);
 
                         memset(palavra,0,100);
-                }
-                break;
-            case 4:
-
-                if(TodosTFIDF != NULL)
+        case 4: // print tfidf
+            
+              if(TodosTFIDF != NULL)
                     fclose(TodosTFIDF);
                 TodosTFIDF = fopen("TodosTFIDF.csv","r");
 
@@ -159,40 +96,39 @@ do {
                 printf("Qual Nota a ser visualizada: ");
                 scanf("%s",nomeArquivo);
                 if(strcmp(nomeArquivo, "Nota1") == 0) { 
-                    sortTFIDF(TodosTFIDF, 1);
+                    ordenaTFIDF(TodosTFIDF, 1);
                     break;
                 } else if(strcmp(nomeArquivo, "Nota2") == 0) {
-                    sortTFIDF(TodosTFIDF, 2);
+                    ordenaTFIDF(TodosTFIDF, 2);
                     break;
                 } else if(strcmp(nomeArquivo, "Nota3") == 0) {
-                    sortTFIDF(TodosTFIDF, 3);
+                    ordenaTFIDF(TodosTFIDF, 3);
                     break;
                 } else if(strcmp(nomeArquivo, "Nota4") == 0) {
-                    sortTFIDF(TodosTFIDF, 4);
+                    ordenaTFIDF(TodosTFIDF, 4);
                     break;
                 } else if(strcmp(nomeArquivo, "Nota5") == 0) {
-                    sortTFIDF(TodosTFIDF, 5);
+                    ordenaTFIDF(TodosTFIDF, 5);
                     break;
                 } else
                     printf("Entrada inválida\n");
                 break;
-            case 5:
-                break;
-            default:
-                printf("Digite um numero valido!\n");
-                break;
-        }   
 
-    } while (MenuNum != 0);
+        case 5: 
+            fclose(Reviews);
+            fclose(Nota1);
+            fclose(Nota2);
+            fclose(Nota3);
+            fclose(Nota4);
+            fclose(Nota5);
+            fclose(pTemp);
+            fclose(TodosTFIDF);
+            break;//saida
+        default:
+            printf("Digite um numero valido!\n");
+                break;
+    }
+} 
+}while (MenuNum != 5);
 
-    fclose(Reviews);
-    fclose(Nota1);
-    fclose(Nota2);
-    fclose(Nota3);
-    fclose(Nota4);
-    fclose(Nota5);
-    fclose(vocabulary);
-    fclose(TodosTFIDF);
-    return 0;
 }
-
